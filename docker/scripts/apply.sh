@@ -19,7 +19,8 @@ Help() {
   echo "Usage:"
   echo "  <s3 path>                 - The path to zip-file containing terraform code in S3"
   echo "  -h                        - display this message."
-  echo "  -w <workdir path>         - workdir for terraform. (default terraform)"
+  echo "  -d <download dir>         - where the s3 file is downloaded and unzipped. (default /tmp/terraform)"
+  echo "  -w <workdir path>         - workdir for terraform, relative to download dir. (default .)"
   echo "  -s <secret_id>            - secret id in AWS SecretsManager to get kubeconfig. (default kubeconfig)"
   echo "  -k <kubeconfig location>  - directory location for kubeconfig. (default ~/.kube)"
   echo "Syntax: ./apply.sh s3://path/to/terraform/artifact.zip -h -w -k"
@@ -85,11 +86,14 @@ DownloadAndUnzip(){
 ################################################################################
 # Get options                                                                  #
 ################################################################################
-while getopts ":hw:s:k:" opt; do
+while getopts ":hw:s:k:d:" opt; do
   case ${opt} in
     h ) # process option help
       Help
       exit 0
+      ;;
+    d )
+      download_dir=$OPTARG
       ;;
     k ) # process option terraform workdir
       kubeconfig_dir=$OPTARG
