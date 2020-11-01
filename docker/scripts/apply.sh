@@ -5,7 +5,7 @@
 
 # Default values.
 kubeconfig_secret_id='kubeconfig'
-workdir="."
+workdir="envs/home"
 download_dir="/tmp/terraform"
 kubeconfig_dir="$HOME/.kube"
 kubeconfig_file="config"
@@ -92,10 +92,10 @@ while getopts ":hw:s:k:d:" opt; do
       Help
       exit 0
       ;;
-    d )
+    d ) # process option download dir
       download_dir=$OPTARG
       ;;
-    k ) # process option terraform workdir
+    k ) # process option kubeconfig dir
       kubeconfig_dir=$OPTARG
       ;;
     w ) # process option terraform workdir
