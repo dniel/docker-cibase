@@ -16,6 +16,7 @@ kubeconfig_file="config"
 Help() {
   # Display Help
   echo "Apply Terraform."
+  echo ""
   echo "Usage:"
   echo "  <s3 path>                 - The path to zip-file containing terraform code in S3"
   echo "  -h                        - display this message."
@@ -23,6 +24,7 @@ Help() {
   echo "  -w <workdir path>         - workdir for terraform, relative to download dir. (default .)"
   echo "  -s <secret_id>            - secret id in AWS SecretsManager to get kubeconfig. (default kubeconfig)"
   echo "  -k <kubeconfig location>  - directory location for kubeconfig. (default ~/.kube)"
+  echo ""
   echo "Syntax: ./apply.sh s3://path/to/terraform/artifact.zip -h -w -k"
   echo
 }
