@@ -1,0 +1,10 @@
+# ignore system folders
+.git
+.idea
+.github
+.dockerignore
+.git*
+renovate.json
+
+**/*.log
+**/.terraform
