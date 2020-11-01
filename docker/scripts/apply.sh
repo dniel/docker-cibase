@@ -127,4 +127,4 @@ echo "Kubeconfig Directory: $kubeconfig_dir"
 
 DownloadAndUnzip $s3_url $download_dir
 Kubeconf $kubeconfig_dir $kubeconfig_secret_id
-Apply $workdir
+Apply $download_dir/$workdir
