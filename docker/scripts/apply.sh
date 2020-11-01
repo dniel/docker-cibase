@@ -5,8 +5,9 @@
 
 # Default values.
 kubeconfig_secret_id='kubeconfig'
-workdir="terraform"
-kubeconfig_dir="~/.kube"
+workdir="."
+download_dir="/tmp/terraform"
+kubeconfig_dir="$HOME/.kube"
 
 ################################################################################
 # Help
@@ -15,13 +16,20 @@ Help() {
   # Display Help
   echo "Apply Terraform."
   echo "Usage:"
+  echo "  <s3 path>                 - The path to zip-file containing terraform code in S3"
   echo "  -h                        - display this message."
-  echo "  -w <workingdir path>      - workdir for terraform. (default terraform)"
+  echo "  -w <workdir path>         - workdir for terraform. (default terraform)"
   echo "  -s <secret_id>            - secret id in AWS SecretsManager to get kubeconfig. (default kubeconfig)"
   echo "  -k <kubeconfig location>  - directory location for kubeconfig. (default ~/.kube)"
-  echo "Syntax: ./apply.sh -h -w -k"
+  echo "Syntax: ./apply.sh s3://path/to/terraform/artifact.zip -h -w -k"
   echo
 }
+
+s3_url=$1;
+if [[ $# != 1 ]]; then
+  Help
+  exit 1
+fi
 
 ################################################################################
 # Retrieve Kubeconfig from AWS Secretsmanager
@@ -31,7 +39,7 @@ Kubeconf(){
     echo "Kubeconfig already exists, don't retrieve from AWS SecretsManager"
   else
     echo "Read kubeconf from secretsmanager secret secret id '$2' and store in '$1/config'.."
-    mkdir $1 && aws secretsmanager get-secret-value --secret-id $2 | jq --raw-output '.SecretString' > $1/config;
+    mkdir -p $1 && aws secretsmanager get-secret-value --secret-id $2 | jq --raw-output '.SecretString' > $1/config;
   fi
 }
 
@@ -43,7 +51,29 @@ Apply() {
   terraform init -input=false "$1"
   terraform apply -target module.template.module.traefik -auto-approve "$1"
   terraform apply -auto-approve "$1"
-  terraform apply -auto-approve "$1"
+}
+
+################################################################################
+# Download And Unzip                                                           #
+################################################################################
+DownloadAndUnzip(){
+  local s3_url=$1
+  local s3_filename=${s3_url##*/}
+  local download_dir=$2
+
+  echo "Download artifact from '$s3_url'"
+  echo "Download artifact filename '$s3_filename'"
+
+  if [[ -d "$download_dir" ]]; then
+    echo "Donwload dir '$download_dir' already exists."
+  else
+    echo "Create Donwload dir '$download_dir'.."
+    mkdir -p $download_dir
+  fi
+
+  echo "Download terraform code from S3 artifact."
+  aws s3 cp $s3_url $download_dir/$s3_filename
+  unzip $download_dir/$s3_filename -d $download_dir
 }
 
 ################################################################################
@@ -79,9 +109,12 @@ shift $((OPTIND -1))
 ################################################################################
 # Main Logic                                                                   #
 ################################################################################
+
+echo "S3 Url: $s3_url"
 echo "Working Directory: $workdir"
 echo "Kubeconfig Secret Id: $kubeconfig_secret_id"
 echo "Kubeconfig Directory: $kubeconfig_dir"
 
-Kubeconf $kubeconfig_dir $kubeconfig_secret_id
-Apply $workdir
+DownloadAndUnzip $s3_url $download_dir
+#Kubeconf $kubeconfig_dir $kubeconfig_secret_id
+#Apply $workdir
