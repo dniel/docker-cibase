@@ -8,6 +8,7 @@ kubeconfig_secret_id='kubeconfig'
 workdir="."
 download_dir="/tmp/terraform"
 kubeconfig_dir="$HOME/.kube"
+kubeconfig_file="config"
 
 ################################################################################
 # Help
@@ -32,14 +33,18 @@ if [[ $# != 1 ]]; then
 fi
 
 ################################################################################
-# Retrieve Kubeconfig from AWS Secretsmanager
+# Retrieve Kube config from AWS SecretsManager
 ################################################################################
 Kubeconf(){
-  if [[ -d "$1" && -f "$1/config" ]]; then
-    echo "Kubeconfig already exists, don't retrieve from AWS SecretsManager"
+  local kubeconfig_dir=$1
+  local kubeconfig_file=$kubeconfig_dir/config
+  local secret_id=$2
+
+  if [[ -d "$kubeconfig_dir" && -f "$kubeconfig_file" ]]; then
+    echo "'$kubeconfig_file' already exists, don't retrieve from AWS SecretsManager"
   else
-    echo "Read kubeconf from secretsmanager secret secret id '$2' and store in '$1/config'.."
-    mkdir -p $1 && aws secretsmanager get-secret-value --secret-id $2 | jq --raw-output '.SecretString' > $1/config;
+    echo "Read kubeconf from SecretsManager secret secret id '$secret_id' and store in '$kubeconfig_file'.."
+    mkdir -p $kubeconfig_dir && aws secretsmanager get-secret-value --secret-id $secret_id | jq --raw-output '.SecretString' > $kubeconfig_file;
   fi
 }
 
@@ -47,10 +52,11 @@ Kubeconf(){
 # Apply                                                                        #
 ################################################################################
 Apply() {
-  echo "Apply Terraform on environment '$1'.."
-  terraform init -input=false "$1"
-  terraform apply -target module.template.module.traefik -auto-approve "$1"
-  terraform apply -auto-approve "$1"
+  local workdir=$1
+  echo "Apply Terraform on environment '$workdir'.."
+  terraform init -input=false "$workdir"
+  terraform apply -target module.template.module.traefik -auto-approve "$workdir"
+  terraform apply -auto-approve "$workdir"
 }
 
 ################################################################################
@@ -116,5 +122,5 @@ echo "Kubeconfig Secret Id: $kubeconfig_secret_id"
 echo "Kubeconfig Directory: $kubeconfig_dir"
 
 DownloadAndUnzip $s3_url $download_dir
-#Kubeconf $kubeconfig_dir $kubeconfig_secret_id
-#Apply $workdir
+Kubeconf $kubeconfig_dir $kubeconfig_secret_id
+Apply $workdir
