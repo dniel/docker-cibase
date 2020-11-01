@@ -5,7 +5,7 @@
 
 # Default values.
 kubeconfig_secret_id='kubeconfig'
-workdir="envs/home"
+workdir="."
 download_dir="/tmp/terraform"
 kubeconfig_dir="$HOME/.kube"
 kubeconfig_file="config"
@@ -128,8 +128,8 @@ shift $((OPTIND -1))
 
 echo "S3 Url: $s3_url"
 echo "Working Directory: $workdir"
-echo "Kubeconfig Secret Id: $kubeconfig_secret_id"
-echo "Kubeconfig Directory: $kubeconfig_dir"
+echo "Kube Config Secret Id: $kubeconfig_secret_id"
+echo "Kube Config Directory: $kubeconfig_dir"
 
 DownloadAndUnzip $s3_url $download_dir
 Kubeconf $kubeconfig_dir $kubeconfig_secret_id
