@@ -92,24 +92,20 @@ fi
 ################################################################################
 # Get options                                                                  #
 ################################################################################
-while getopts ":hw:s:k:d:" opt; do
+while getopts "hw:s:k:d:" opt; do
   case ${opt} in
     h ) # process option help
       Help
       exit 0
       ;;
     d ) # process option download dir
-      download_dir=$OPTARG
-      ;;
+      download_dir="$OPTARG" ;;
     k ) # process option kubeconfig dir
-      kubeconfig_dir=$OPTARG
-      ;;
+      kubeconfig_dir="$OPTARG" ;;
     w ) # process option terraform workdir
-      workdir=$OPTARG
-      ;;
+      workdir="$OPTARG" ;;
     s ) # process option kubeconfig secret id
-      kubeconfig_secret_id=$OPTARG
-      ;;
+      kubeconfig_secret_id="$OPTARG" ;;
     \? )
       echo "Invalid Option: -$OPTARG" 1>&2
       exit 1
