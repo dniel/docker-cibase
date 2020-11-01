@@ -27,12 +27,6 @@ Help() {
   echo
 }
 
-s3_url=$1;
-if [[ $# != 1 ]]; then
-  Help
-  exit 1
-fi
-
 ################################################################################
 # Retrieve Kube config from AWS SecretsManager
 ################################################################################
@@ -82,6 +76,16 @@ DownloadAndUnzip(){
   aws s3 cp $s3_url $download_dir/$s3_filename
   unzip $download_dir/$s3_filename -d $download_dir
 }
+
+################################################################################
+# Get positional arguments                                                     #
+################################################################################
+s3_url=$1; shift # remove s3_url from argument list.
+if [[ $# != 1 ]]; then
+  Help
+  exit 1
+fi
+
 
 ################################################################################
 # Get options                                                                  #
