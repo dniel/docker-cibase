@@ -50,7 +50,7 @@ Kubeconf(){
 ################################################################################
 Apply() {
   local workdir=$1
-  echo "Apply Terraform on environment '$workdir'.."
+  echo "Apply Terraform in workdir '$workdir'"
   terraform init -input=false "$workdir"
   terraform apply -target module.template.module.traefik -auto-approve "$workdir"
   terraform apply -auto-approve "$workdir"
@@ -82,30 +82,31 @@ DownloadAndUnzip(){
 ################################################################################
 # Get positional arguments                                                     #
 ################################################################################
-s3_url=$1; shift # remove s3_url from argument list.
-if [[ $# != 1 ]]; then
-  Help
-  exit 1
-fi
-
+echo "# Arguments: $@"
+s3_url=$1
+shift # remove s3_url from argument list.
 
 ################################################################################
 # Get options                                                                  #
 ################################################################################
-while getopts "hw:s:k:d:" opt; do
+while getopts ":hw:s:k:d:" opt; do
   case ${opt} in
     h ) # process option help
       Help
       exit 0
       ;;
     d ) # process option download dir
-      download_dir="$OPTARG" ;;
+      download_dir="$OPTARG"
+      ;;
     k ) # process option kubeconfig dir
-      kubeconfig_dir="$OPTARG" ;;
+      kubeconfig_dir="$OPTARG"
+      ;;
     w ) # process option terraform workdir
-      workdir="$OPTARG" ;;
+      workdir="$OPTARG"
+      ;;
     s ) # process option kubeconfig secret id
-      kubeconfig_secret_id="$OPTARG" ;;
+      kubeconfig_secret_id="$OPTARG"
+      ;;
     \? )
       echo "Invalid Option: -$OPTARG" 1>&2
       exit 1
@@ -122,10 +123,11 @@ shift $((OPTIND -1))
 # Main Logic                                                                   #
 ################################################################################
 
-echo "S3 Url: $s3_url"
-echo "Working Directory: $workdir"
-echo "Kube Config Secret Id: $kubeconfig_secret_id"
-echo "Kube Config Directory: $kubeconfig_dir"
+printf "# S3 Download url\t:$s3_url\n"
+printf "# Working Directory\t:$workdir\n"
+printf "# Kube Config Secret Id\t:$kubeconfig_secret_id\n"
+printf "# Kube Config Directory\t:$kubeconfig_dir\n"
+printf "# Download Directory\t:$download_dir\n"
 
 DownloadAndUnzip $s3_url $download_dir
 Kubeconf $kubeconfig_dir $kubeconfig_secret_id
