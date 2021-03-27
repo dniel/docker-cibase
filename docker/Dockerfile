@@ -6,6 +6,7 @@ ENV KUBECTL_VERSION=v1.19.0
 ENV HELM_VERSION=v2.13.1
 ENV AWSCLI=1.18.160
 ENV TERRAFORM_VERSION=0.14.9
+ENV TERRAGRUNT_VERSION=0.28.16
 ENV AWS_IAM_AUTH_VERSION=0.5.2
 ENV SPIN_CLI_VERSION=1.19.0
 
@@ -23,6 +24,10 @@ RUN apk --update --no-cache add \
 
 RUN pip3 install --upgrade pip
 RUN pip3 install requests awscli==${AWSCLI}
+
+# install terragrunt
+RUN curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/${TERRAGRUNT_VERSION}_linux_amd64 -o /usr/local/bin/terragrunt && \
+    chmod +x /usr/local/bin/terragrunt
 
 # isntall aws-iam-authenticator
 # TOFO, rewrite kubeconfig so that this is no longer necessary
