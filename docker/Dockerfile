@@ -26,7 +26,7 @@ RUN pip3 install --upgrade pip
 RUN pip3 install requests awscli==${AWSCLI}
 
 # install terragrunt
-RUN curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/${TERRAGRUNT_VERSION}_linux_amd64 -o /usr/local/bin/terragrunt && \
+RUN curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 -o /usr/local/bin/terragrunt && \
     chmod +x /usr/local/bin/terragrunt
 
 # isntall aws-iam-authenticator
