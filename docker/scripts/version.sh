@@ -22,7 +22,7 @@ Help() {
 SetVersion() {
   local version=$1
   local application=$2
-  local nameprefix=$1
+  local nameprefix=$3
   echo "Set version '$version' for '$application' in '$nameprefix'"
   aws ssm put-parameter --overwrite true --name "/versions/$nameprefix/$application" --type "String" --value "$version"
 }
