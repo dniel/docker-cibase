@@ -51,9 +51,9 @@ Kubeconf(){
 Apply() {
   local workdir=$1
   echo "Apply Terraform in workdir '$workdir'"
-  terraform -chdir "$workdir" init -input=false
-  terraform -chdir "$workdir" apply -target module.template.module.traefik -auto-approve
-  terraform -chdir "$workdir" apply -auto-approve
+  terraform -chdir="$workdir" init -input=false
+  terraform -chdir="$workdir" apply -target module.template.module.traefik -auto-approve
+  terraform -chdir="$workdir" apply -auto-approve
 }
 
 ################################################################################
