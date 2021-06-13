@@ -52,8 +52,8 @@ Apply() {
   local workdir=$1
   echo "Apply Terraform in workdir '$workdir'"
   terraform init -input=false "$workdir"
-  terraform apply -target module.template.module.traefik -auto-approve "$workdir"
-  terraform apply -auto-approve "$workdir"
+  terraform apply -target module.template.module.traefik -auto-approve -chdir "$workdir"
+  terraform apply -auto-approve -chdir "$workdir"
 }
 
 ################################################################################
