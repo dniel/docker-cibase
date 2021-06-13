@@ -51,7 +51,6 @@ Kubeconf(){
 Apply() {
   local workdir=$1
   echo "Apply Terraform in workdir '$workdir'"
-  terragrunt apply -target module.template.module.traefik -auto-approve --terragrunt-working-dir "$workdir"
   terragrunt apply -auto-approve --terragrunt-working-dir "$workdir"
 }
 
