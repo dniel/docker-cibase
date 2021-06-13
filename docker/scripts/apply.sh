@@ -132,3 +132,6 @@ printf "# Download Directory\t:$download_dir\n"
 DownloadAndUnzip $s3_url $download_dir
 Kubeconf $kubeconfig_dir $kubeconfig_secret_id
 Apply "$download_dir/$workdir"
+
+# set successful exit code
+exit 0
