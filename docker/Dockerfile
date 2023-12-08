@@ -1,4 +1,4 @@
-FROM alpine:3.13
+FROM alpine:3.19
 MAINTAINER Daniel Engfeldt <daniel@engfeldt.net>
 
 ENV AWS_DEFAULT_REGION=eu-north-1
